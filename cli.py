@@ -30,9 +30,10 @@ env.read_env()
 def _rsync(now):
     for path in env.list('SOURCE_PATHS'):
         folder_name = path.split('/')[-2]
-        destination_path = "{}/{}/{}".format(
+        destination_path = os.path.join(
             env('DESTINATION_PATH'),
-            now.strftime('%Y-%m-%d %H:%M'), folder_name
+            now.strftime('%Y-%m-%d %H:%M'),
+            folder_name
         )
         os.makedirs(destination_path)
         logger.info(
