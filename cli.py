@@ -78,4 +78,4 @@ schedule.every(env.int('POOLING_IN_MINUTES')).minutes.do(job)
 
 while True:
     schedule.run_pending()
-    time.sleep(60 * 24)
+    time.sleep(60)
