@@ -1,0 +1,2 @@
+environs==7.3.0
+schedule==0.6.0
