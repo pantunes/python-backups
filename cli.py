@@ -32,7 +32,7 @@ def _rsync(now):
         folder_name = path.split('/')[-2]
         destination_path = os.path.join(
             env('DESTINATION_PATH'),
-            now.strftime('%Y-%m-%d %H:%M'),
+            now.strftime('%Y-%m-%d %H%M'),
             folder_name
         )
         os.makedirs(destination_path)
