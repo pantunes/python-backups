@@ -15,7 +15,6 @@ import shutil
 import schedule
 import time
 import subprocess
-from pathlib import Path
 from datetime import datetime
 from environs import Env
 
@@ -35,7 +34,7 @@ def _rsync(now):
             env('DESTINATION_PATH'),
             now.strftime('%Y-%m-%d %H:%M'), folder_name
         )
-        Path(destination_path).mkdir(parents=True, exist_ok=True)
+        os.makedirs(destination_path)
         logger.info(
             'SOURCE_PATH: {} DESTINATION_PATH: {}'.format(
                 path, destination_path
@@ -79,4 +78,4 @@ schedule.every(env.int('POOLING_IN_MINUTES')).minutes.do(job)
 
 while True:
     schedule.run_pending()
-    time.sleep(60)
+    time.sleep(60 * 24)
