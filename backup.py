@@ -59,8 +59,8 @@ def _rsync(now):
         os.makedirs(destination_path)
         _cmd = 'rsync -av -e "ssh -o Compression=no" {} {}'.format(
             path, destination_path)
-        _run_command('COMMAND: {}'.format(_cmd))
-        logger.info(_cmd)
+        _run_command(_cmd)
+        logger.info('COMMAND: {}'.format(_cmd))
 
 
 def _clean_old_backups():
