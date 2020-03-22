@@ -32,35 +32,43 @@ env = Env()
 env.read_env()
 
 
-def _run_command(command):
+def _run_command(command, _id):
     process = subprocess.Popen(
         split(command),
         stdout=subprocess.PIPE,
         universal_newlines=True
     )
+
     while True:
         output = process.stdout.readline()
+
         if output == '' and process.poll() is not None:
             break
+
         if output:
-            logger.info(output.strip())
+            logger.info('{} - {}'.format(_id, output.strip()))
+
     rc = process.poll()
     return rc
 
 
 def _rsync(now):
     for path in env.list('SOURCE_PATHS'):
-        folder_name = path.split('/')[-2]
+        project_name = path.split('/')[-2]
         destination_path = os.path.join(
             env('DESTINATION_PATH'),
             now.strftime('%Y-%m-%d~%H%M'),
-            folder_name
+            project_name
         )
+
         os.makedirs(destination_path)
+
         _cmd = 'rsync -av -e "ssh -o Compression=no" {} {}'.format(
             path, destination_path)
+
         logger.info('COMMAND: {}'.format(_cmd))
-        _run_command(_cmd)
+
+        _run_command(_cmd, _id=project_name)
 
 
 def _clean_old_backups():
