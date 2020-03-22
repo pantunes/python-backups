@@ -15,16 +15,37 @@ import shutil
 import schedule
 import time
 import subprocess
+from shlex import split
 from datetime import datetime
 from environs import Env
 
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
-
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(message)s',
+    filename='/tmp/python-backup.log',
+    filemode='w'
+)
 
 env = Env()
 env.read_env()
+
+
+def _run_command(command):
+    process = subprocess.Popen(
+        split(command),
+        stdout=subprocess.PIPE,
+        universal_newlines=True
+    )
+    while True:
+        output = process.stdout.readline()
+        if output == '' and process.poll() is not None:
+            break
+        if output:
+            logger.info(output.strip())
+    rc = process.poll()
+    return rc
 
 
 def _rsync(now):
@@ -32,21 +53,16 @@ def _rsync(now):
         folder_name = path.split('/')[-2]
         destination_path = os.path.join(
             env('DESTINATION_PATH'),
-            now.strftime('%Y-%m-%d %H%M'),
+            now.strftime('%Y-%m-%d~%H%M'),
             folder_name
         )
         os.makedirs(destination_path)
         logger.info(
-            'SOURCE_PATH: {} DESTINATION_PATH: {} TIMEOUT: {} seconds'.format(
-                path, destination_path, env.int('TIMEOUT')
+            'SOURCE_PATH: {} DESTINATION_PATH: {}'.format(
+                path, destination_path
             )
         )
-        out = subprocess.check_output(
-            ['rsync', '-av', path, destination_path],
-            universal_newlines=True,
-            timeout=env.int('TIMEOUT')
-        )
-        logger.info(out)
+        _run_command('rsync -av {} {}'.format(path, destination_path))
 
 
 def _clean_old_backups():
