@@ -75,8 +75,24 @@ def job():
     )
 
 
-schedule.every(env.int('POOLING_IN_MINUTES')).minutes.do(job)
+if __name__ == "__main__":
+    pim = env.int('POOLING_INTERVAL_IN_MINUTES', None)
+    pt = env('POOLING_TIME', None)
 
-while True:
-    schedule.run_pending()
-    time.sleep(60)
+    if not (bool(pim) ^ bool(pt)):
+        logger.info('Only 1 POOLING config should be set')
+        sys.exit(0)
+
+    if pim:
+        logger.info('Scheduling Task to run each {} minutes'.format(pim))
+        schedule.every(pim).minutes.do(job)
+    elif pt:
+        logger.info('Scheduling Task at {}'.format(pt))
+        schedule.every().day.at(pt).do(job)
+    else:
+        logger.info('POOLING config not found')
+        sys.exit(0)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
