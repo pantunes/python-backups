@@ -93,6 +93,11 @@ def job():
 
 
 if __name__ == "__main__":
+    if env('DEBUG', None):
+        logger.info('DEBUG=Yes')
+        job()
+        sys.exit(0)
+
     pim = env.int('POOLING_INTERVAL_IN_MINUTES', None)
     pt = env('POOLING_TIME', None)
 
