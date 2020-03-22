@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(message)s',
-    filename='/tmp/python-backup.log',
+    filename='/tmp/{}.log'.format(os.path.basename(__file__).split('.')[0]),
     filemode='w'
 )
 
