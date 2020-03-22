@@ -37,13 +37,14 @@ def _rsync(now):
         )
         os.makedirs(destination_path)
         logger.info(
-            'SOURCE_PATH: {} DESTINATION_PATH: {}'.format(
-                path, destination_path
+            'SOURCE_PATH: {} DESTINATION_PATH: {} TIMEOUT: {} seconds'.format(
+                path, destination_path, env.int('TIMEOUT')
             )
         )
         out = subprocess.check_output(
             ['rsync', '-av', path, destination_path],
-            universal_newlines=True
+            universal_newlines=True,
+            timeout=env.int('TIMEOUT')
         )
         logger.info(out)
 
