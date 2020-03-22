@@ -62,7 +62,8 @@ def _rsync(now):
                 path, destination_path
             )
         )
-        _run_command('rsync -av {} {}'.format(path, destination_path))
+        _run_command('rsync -av -e "ssh -o Compression=no" {} {}'.format(
+            path, destination_path))
 
 
 def _clean_old_backups():
