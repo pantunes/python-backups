@@ -86,7 +86,7 @@ def job():
     try:
         _rsync(now=now)
     except subprocess.CalledProcessError as e:
-        logger.info(e.output)
+        logger.info('ERROR: '.format(e.output))
         sys.exit(0)
 
     _clean_old_backups()
